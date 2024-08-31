@@ -13,7 +13,7 @@ const Header = () => {
      })
     }
   return (
-    <section >
+    <section className='sticky top-0 left-0 right-0 z-50 bg-white'>
         <header className='flex justify-between container mx-auto px-5 py-4 items-center'>
             <div>
                 <img className='w-16' src={images.Logo} alt="" />
