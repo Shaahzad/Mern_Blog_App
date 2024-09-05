@@ -1,8 +1,17 @@
 import React from 'react'
 import ArticleCard from '../../components/ArticleCard'
 import { FaArrowRight } from "react-icons/fa";
+import { useSelector, useDispatch } from 'react-redux';
+import { ChangeCount } from '../../store/countAction/countAction';
 
 const Article = () => {
+  const count = useSelector(state => state.count)
+  const dispatch = useDispatch()
+
+
+  const countchangeHandler = (type) => {
+    dispatch(ChangeCount(type))
+  }
   return (
     <section className='flex flex-col container mx-auto  px-5 py-10'>
       <div className="flex flex-wrap md:gap-x-5 gap-y-5 pb-10">
@@ -13,6 +22,11 @@ const Article = () => {
         <span>More Article</span>
         <FaArrowRight className='w-3 h-3'/>
       </button>
+      <div>
+        <button onClick={() => countchangeHandler('increase')}>increase</button>
+        {count.number}
+        <button onClick={() => countchangeHandler('decrease')}>decrease</button>
+      </div>
     </section>
   )
 }
