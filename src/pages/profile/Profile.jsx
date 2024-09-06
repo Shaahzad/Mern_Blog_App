@@ -1,44 +1,65 @@
 import React from 'react'
 import Mainlayout from '../../components/Mainlayout'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
-import { useMutation } from '@tanstack/react-query'
-import { signup } from '../../services/index/User'
-import toast from "react-hot-toast"
 import { useDispatch } from 'react-redux'
-import { userAction } from '../../store/reducers/userReducer'
 import { useSelector } from 'react-redux'
 import { useEffect } from 'react'
-const Register = () => {
+import {useQuery} from "@tanstack/react-query"
+import {getUserProfile, updateProfile} from "../../services/index/User"
+import Profilepicture from '../../components/Profilepicture'
+import {useMutation, useQueryClient} from "@tanstack/react-query"
+import { userAction } from '../../store/reducers/userReducer'
+import { toast } from 'react-hot-toast'
+const ProfilePage = () => {
 const dispatch = useDispatch()
 const userstate = useSelector(state => state.user)
 const navigate = useNavigate()
-const {mutate, isloading } = useMutation({
-  mutationFn: ({name, email, password}) => {
-    return signup({name, email, password})
-  },
-  onSuccess: (data) => {
-    dispatch(userAction.setUserInfo(data))
-    localStorage.setItem('user', JSON.stringify(data))
-  },
-  onError: (error) => {
-    toast.error(error.message)
-    console.log(error)
-  }
+const queryClient = useQueryClient()
+
+
+const {data: profile, isLoading: profileisloading, isError: profileiserror} = useQuery({
+    queryFn: () => {
+        return getUserProfile({token: userstate.userinfo.token})
+    },
+    queryKey: ['profile'],
 })
 
+const {mutate, isloading:updateprofileisloading } = useMutation({
+    mutationFn: ({name, email, password}) => {
+      return updateProfile({
+        token: userstate.userinfo.token,
+        userData: {name, email, password}
+      })
+    },
+    onSuccess: (data) => {
+      dispatch(userAction.setUserInfo(data))
+      localStorage.setItem('user', JSON.stringify(data))
+      queryClient.invalidateQueries(['profile'])
+      toast.success('Profile updated successfully')
+    },
+    onError: (error) => {
+      toast.error(error.message)
+      console.log(error)
+    }
+  })
+
+
 useEffect(() => {
- if(userstate.userinfo){
+ if(!userstate.userinfo){
 navigate('/')
  }
 },[navigate, userstate.userinfo])
 
-const {register, handleSubmit, formState: {errors, isValid}, watch} = useForm({
+const {register, handleSubmit, formState: {errors, isValid}} = useForm({
     defaultValues: {
         name: '',
         email: '',
-        password: '',
-        Cpassword: ''
+        password: ''
+    },
+    values: {
+        name: profileisloading ? "" : profile.name,
+        email: profileisloading ? "" : profile.email
     },
     mode: 'onChange'
 })
@@ -47,13 +68,15 @@ const submitHandler = (data) => {
     mutate({name, email, password})
 }
 
-const password = watch('password')
+
+console.log(profile)
+
 
   return (
     <Mainlayout>
      <section className='container mx-auto px-5 py-10'>
        <div className='w-full max-w-sm mx-auto'>
-     <h1 className='text-3xl font-bold text-center text-Dark-hard mb-8'>Sign Up</h1>
+       <Profilepicture avatar={profile?.avatar}/>
      <form  onSubmit={handleSubmit(submitHandler)}>
      <div className='flex flex-col mb-6 w-full'>
        <label htmlFor="name" className='text-[#959EAD] font-semibold block'>Name</label>
@@ -88,42 +111,15 @@ const password = watch('password')
       {errors.name && <p className='text-red-500 text-sm mt-1'>{errors.email.message}</p>}
      </div>
      <div className='flex flex-col mb-6 w-full'>
-       <label htmlFor="password" className='text-[#959EAD] font-semibold block'>Password</label>
-       <input type="password" id='password' {...register('password',{
-        minLength: {
-            value: 6,
-            message: 'Min length should be 6'
-        },
-        required: {
-            value: true,
-            message: 'This field is required'
-        }
-       })} placeholder='Enter your password'  className={`placeholder:text-[#959EAD] text-Dark-hard
+       <label htmlFor="password" className='text-[#959EAD] font-semibold block'>New Password (optional)</label>
+       <input type="password" id='password' {...register('password')} placeholder='Enter your new password'  className={`placeholder:text-[#959EAD] text-Dark-hard
        mt-3 rounded-lg px-5 py-4 font-semibold block outline-none border ${errors.password ? 'border-red-500' :  "border-[#959EAD]"}`}/>
         {errors.password && <p className='text-red-500 text-sm mt-1'>{errors.password.message}</p>}
      </div>
-     <div className='flex flex-col mb-6 w-full'>
-       <label htmlFor="Cpassword" className='text-[#959EAD] font-semibold block'>Confirm Password</label>
-       <input type="password" id='Cpassword' {...register('Cpassword',{
-        required: {
-            value: true,
-            message: 'This field is required'
-        },
-        validate: (value)=>{
-          if(value !== password) {
-            return 'Password does not match'
-        }
-      }
-       })} placeholder='Enter your Confirm Password'  className={`placeholder:text-[#959EAD] text-Dark-hard
-       mt-3 rounded-lg px-5 py-4 font-semibold block outline-none border ${errors.Cpassword ? 'border-red-500' :  "border-[#959EAD]"}`}/>
-      {errors.Cpassword && <p className='text-red-500 text-sm mt-1'>{errors.Cpassword.message}</p>}
-     </div>
-     <button disabled={!isValid || isloading} type='submit' className='w-full text-center bg-primary
+     <button disabled={!isValid || profileisloading || updateprofileisloading} type='submit' className='w-full text-center bg-primary
       text-white font-semibold rounded-lg py-3 px-5 mb-6 disabled:opacity-70 disabled:cursor-not-allowed'
-     >Register</button>
-     <p className='text-sm font-semibold text-[#959EAD]'>You Have An Account ? {" "}
-        <Link to="/login" className='text-primary'>login now</Link>
-     </p>
+     >Update</button>
+     
      </form>
        </div>
      </section>
@@ -131,4 +127,4 @@ const password = watch('password')
   )
 }
 
-export default Register
+export default ProfilePage

@@ -3,19 +3,20 @@ import Mainlayout from '../../components/Mainlayout'
 import { Link, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { useMutation } from '@tanstack/react-query'
-import { signup } from '../../services/index/User'
+import { login } from '../../services/index/User'
 import toast from "react-hot-toast"
 import { useDispatch } from 'react-redux'
 import { userAction } from '../../store/reducers/userReducer'
 import { useSelector } from 'react-redux'
 import { useEffect } from 'react'
-const Register = () => {
+
+const Login = () => {
 const dispatch = useDispatch()
 const userstate = useSelector(state => state.user)
 const navigate = useNavigate()
 const {mutate, isloading } = useMutation({
-  mutationFn: ({name, email, password}) => {
-    return signup({name, email, password})
+  mutationFn: ({ email, password}) => {
+    return login({ email, password})
   },
   onSuccess: (data) => {
     dispatch(userAction.setUserInfo(data))
@@ -33,43 +34,25 @@ navigate('/')
  }
 },[navigate, userstate.userinfo])
 
-const {register, handleSubmit, formState: {errors, isValid}, watch} = useForm({
+const {register, handleSubmit, formState: {errors, isValid}} = useForm({
     defaultValues: {
-        name: '',
         email: '',
-        password: '',
-        Cpassword: ''
+        password: ''
     },
     mode: 'onChange'
 })
 const submitHandler = (data) => {
-    const {name, email, password} = data
-    mutate({name, email, password})
+    const {email, password} = data
+    mutate({email, password})
 }
 
-const password = watch('password')
 
   return (
     <Mainlayout>
      <section className='container mx-auto px-5 py-10'>
        <div className='w-full max-w-sm mx-auto'>
-     <h1 className='text-3xl font-bold text-center text-Dark-hard mb-8'>Sign Up</h1>
+     <h1 className='text-3xl font-bold text-center text-Dark-hard mb-8'>Login</h1>
      <form  onSubmit={handleSubmit(submitHandler)}>
-     <div className='flex flex-col mb-6 w-full'>
-       <label htmlFor="name" className='text-[#959EAD] font-semibold block'>Name</label>
-       <input type="text" id='name' {...register('name',{
-        minLength: {
-            value: 1,
-            message: 'Min length should be 1'
-        },
-        required: {
-            value: true,
-            message: 'This field is required'
-        }
-       })} placeholder='Enter your name'  className={`placeholder:text-[#959EAD] text-Dark-hard
-       mt-3 rounded-lg px-5 py-4 font-semibold block outline-none border ${errors.name ? 'border-red-500' : 'border-[#959EAD]'}`}/>
-       {errors.name && <p className='text-red-500 text-sm mt-1'>{errors.name.message}</p>}
-     </div>
      <div className='flex flex-col mb-6 w-full'>
        <label htmlFor="email" className='text-[#959EAD] font-semibold block'>Email</label>
        <input type="email" id='email'
@@ -102,27 +85,14 @@ const password = watch('password')
        mt-3 rounded-lg px-5 py-4 font-semibold block outline-none border ${errors.password ? 'border-red-500' :  "border-[#959EAD]"}`}/>
         {errors.password && <p className='text-red-500 text-sm mt-1'>{errors.password.message}</p>}
      </div>
-     <div className='flex flex-col mb-6 w-full'>
-       <label htmlFor="Cpassword" className='text-[#959EAD] font-semibold block'>Confirm Password</label>
-       <input type="password" id='Cpassword' {...register('Cpassword',{
-        required: {
-            value: true,
-            message: 'This field is required'
-        },
-        validate: (value)=>{
-          if(value !== password) {
-            return 'Password does not match'
-        }
-      }
-       })} placeholder='Enter your Confirm Password'  className={`placeholder:text-[#959EAD] text-Dark-hard
-       mt-3 rounded-lg px-5 py-4 font-semibold block outline-none border ${errors.Cpassword ? 'border-red-500' :  "border-[#959EAD]"}`}/>
-      {errors.Cpassword && <p className='text-red-500 text-sm mt-1'>{errors.Cpassword.message}</p>}
-     </div>
+     <Link to="/forget-password" className='text-sm text-primary font-semibold'>
+     Forget Password ?
+     </Link>
      <button disabled={!isValid || isloading} type='submit' className='w-full text-center bg-primary
-      text-white font-semibold rounded-lg py-3 px-5 mb-6 disabled:opacity-70 disabled:cursor-not-allowed'
-     >Register</button>
-     <p className='text-sm font-semibold text-[#959EAD]'>You Have An Account ? {" "}
-        <Link to="/login" className='text-primary'>login now</Link>
+      text-white font-semibold rounded-lg py-3 px-5 my-6 disabled:opacity-70 disabled:cursor-not-allowed'
+     >Sign In</button>
+     <p className='text-sm font-semibold text-[#959EAD]'>Don't Have An Account ? {" "}
+        <Link to="/register" className='text-primary'>Register Here</Link>
      </p>
      </form>
        </div>
@@ -131,4 +101,4 @@ const password = watch('password')
   )
 }
 
-export default Register
+export default Login

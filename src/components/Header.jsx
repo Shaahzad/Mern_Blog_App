@@ -3,14 +3,26 @@ import { images } from '../constants'
 import { AiOutlineMenu } from "react-icons/ai";
 import { AiOutlineClose } from "react-icons/ai";
 import { MdKeyboardArrowDown } from "react-icons/md";
-
+import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { logout } from '../store/countAction/userAction';
+import { useNavigate } from 'react-router-dom';
 
 const Header = () => {
+    const navigate = useNavigate()
     const [NavIsvisible, setNavIsvisible] = useState(false)
+    const userstate = useSelector(state => state.user)
+    const dispatch = useDispatch()
     const navVisibilityHandler = ()=>{
      setNavIsvisible((curstate)=>{
         return !curstate
      })
+    }
+
+
+    const LogoutHandler = ()=>{
+        dispatch(logout())
+        navigate('/login')
     }
   return (
     <section className='sticky top-0 left-0 right-0 z-50 bg-white'>
@@ -32,10 +44,16 @@ const Header = () => {
                     <li className='flex'>pages <MdKeyboardArrowDown className='mt-2'/></li>
                     <li>Pricing</li>
                     <li>Faq</li>
+                    {userstate.userinfo && <li onClick={()=> navigate('/profile')}>Profile</li>}
                 </ul>
-                <button className='mt-5 lg:mt-0 border-blue-500 border-2 px-6 py-2 font-semibold text-blue-500 rounded-full
+                {userstate.userinfo ? (
+                    <button onClick={LogoutHandler} className='mt-5 lg:mt-0 border-blue-500 border-2 px-6 py-2 font-semibold text-blue-500 rounded-full
+                    hover:bg-blue-500 hover:text-white transition-all duration-300
+                    '>Log Out</button>
+                ) 
+                :(<button onClick={()=> navigate('/login')} className='mt-5 lg:mt-0 border-blue-500 border-2 px-6 py-2 font-semibold text-blue-500 rounded-full
                 hover:bg-blue-500 hover:text-white transition-all duration-300
-                '>Sign in</button>
+                '>Sign in</button>)}
             </div>
         </header>
     </section>

@@ -4,6 +4,8 @@ import {Routes, Route} from 'react-router-dom'
 import ArticleDetailpage from './pages/ArticalDetail/ArticleDetailpage'
 import Register from './pages/register/Register'
 import {Toaster} from "react-hot-toast"
+import Login from './pages/login/Login'
+import ProfilePage from './pages/profile/Profile'
 
 const App = () => {
   return (
@@ -12,6 +14,8 @@ const App = () => {
         <Route index path='/' element={<Homepage/>}/>
         <Route  path='/blog/:id' element={<ArticleDetailpage/>}/>
         <Route path='/register' element={<Register/>}/>
+        <Route path='/login' element={<Login/>}/>
+        <Route path='profile' element={<ProfilePage/>}/>
       </Routes>
       <Toaster/>
     </div>
