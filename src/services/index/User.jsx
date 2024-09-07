@@ -63,6 +63,26 @@ export const updateProfile = async ({token,userData}) => {
 }
 
 
+export const uploadProfilePicture = async ({token, formData}) => {
+    try {
+     const Config = {
+        headers:{
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`
+        }
+     }
+        const {data} = await axios.put("http://localhost:5000/api/users/updateProfilePicture",formData,Config);
+        return data
+    } catch (error) {
+        if(error.response && error.response.data.message)
+            throw new Error(error.response.data.message)
+        throw new Error(error.message)
+    }
+}
+
+
+
+
 
 
 

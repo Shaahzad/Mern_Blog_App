@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { stables } from '../constants'
 import { FaCamera } from "react-icons/fa";
 import Cropeasy from './crop/Cropeasy';
