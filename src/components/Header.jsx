@@ -6,7 +6,7 @@ import { MdKeyboardArrowDown } from "react-icons/md";
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { logout } from '../store/countAction/userAction';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const Header = () => {
     const navigate = useNavigate()
@@ -28,7 +28,9 @@ const Header = () => {
     <section className='sticky top-0 left-0 right-0 z-50 bg-white'>
         <header className='flex justify-between container mx-auto px-5 py-4 items-center'>
             <div>
-                <img className='w-16' src={images.Logo} alt="" />
+               <Link to='/'>
+               <img className='w-16' src={images.Logo} alt="" />
+               </Link>
             </div>
             <div className='lg:hidden z-50'>
                 {NavIsvisible ? (
@@ -39,7 +41,7 @@ const Header = () => {
             </div>
             <div className={`${NavIsvisible ? 'right-0' : '-right-full'} transition-all duration-300 mt-[56px] cursor-pointer lg:mt-0 bg-Dark-hard lg:bg-transparent z-[50] flex flex-col w-full lg:w-auto justify-center lg:justify-end lg:flex-row fixed  top-0 bottom-0 lg:static gap-x-9 items-center`}>
                 <ul className='text-white items-center gap-y-5 lg:text-Dark-soft flex flex-col lg:flex-row gap-x-8 font-semibold'>
-                    <li>Home</li>
+                     <Link to='/'>Home</Link>
                     <li>Articles</li>
                     <li className='flex'>pages <MdKeyboardArrowDown className='mt-2'/></li>
                     <li>Pricing</li>
