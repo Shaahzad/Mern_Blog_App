@@ -1,17 +1,13 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Mainlayout from '../../components/Mainlayout'
 import Breadcrumbs from '../../components/Breadcrumbs'
-import { images } from '../../constants'
-import { Link } from 'react-router-dom'
+import { images, stables } from '../../constants'
+import { Link, useParams } from 'react-router-dom'
 import SuggestedPost from './Container/SuggestedPost'
 import ShareButton from '../../components/ShareButton'
+import { useQuery } from '@tanstack/react-query'
+import { getSinglePost } from '../../services/index/Post'
 
-
-const BraedCrumbData = [
-    {name: "Home", link: "/"},
-    {name: "Blog", link: "/blog"},
-    {name: "Article title", link: "/blog/1"},
-]
 
 const postData = [
   {
@@ -49,25 +45,42 @@ const tagsData = [
 ]
 
 const ArticleDetailpage = () => {
+  const {slug} = useParams()
+  const [BreadcrumbData, setBreadcrumbData] = useState([])
+  const {data} = useQuery({
+    queryFn: () => getSinglePost({slug}),
+    queryKey: ["blog", slug],
+    onSuccess: (data) => {
+      setBreadcrumbData([
+        {name: "Home", link: "/"},
+        {name: "Blog", link: "/blog"},
+        {name: "Article title", link: `/blog/${data.slug}`},
+      ])
+    } 
+  })
   return (
     <Mainlayout>
         <section className='container mx-auto max-w-5xl flex flex-col px-5 py-5
         lg:flex-row lg:gap-x-5 lg:items-start
         '>
             <article className='flex-1'>
-             <Breadcrumbs data={BraedCrumbData}/>
-             <img className='rounded-xl w-full' src={images.PostImage} alt="laptop" />
-             <Link to="/blog?category=selectCategory" className='text-primary text-sm inline-block mt-4
+             <Breadcrumbs data={BreadcrumbData}/>
+             <img className='rounded-xl w-full' src={data?.photo ? stables.upload_Folder_Base_Url + data?.photo : images.PostImage} alt={data?.title} />
+             <div className='mt-4 flex gap-2'>
+             {data?.categories.map((category) => (   
+             <Link to={`/blog?category=${category.name}`} className='text-primary text-sm inline-block 
               md:text-base
              '>
-             Education
+             {category.name}
              </Link>
+             ))}
+             </div>
              <h1 className='text-xl font-medium text-Dark-hard mt-4
               md:text[26px]
-             '>Help Children Get Better Education</h1>
+             '>{data?.Title}</h1>
              <div className='mt-4 text-Dark-soft'>
             <p className='leading-7'>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam quaerat praesentium error. Consequatur ex exercitationem totam praesentium incidunt earum ullam.
+              {data?.Caption}
             </p>
              </div>
             </article>

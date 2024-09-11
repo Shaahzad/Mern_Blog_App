@@ -25,7 +25,7 @@ const SuggestedPost = ({className,header, post = [], tags}) => {
      <h2 className='text-Dark-hard font-medium mt-8 md:text-xl'>Tags</h2>
      <div className='flex flex-wrap gap-x-2 gap-y-2 mt-4'>
         {tags.map((item, index) => (
-        <Link
+        <Link key={index}
         className='inline-block rounded-md font-medium px-3 py-1.5 bg-primary text-xs text-white
         md:text-sm
         '
