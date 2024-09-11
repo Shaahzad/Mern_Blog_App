@@ -7,6 +7,8 @@ import SuggestedPost from './Container/SuggestedPost'
 import ShareButton from '../../components/ShareButton'
 import { useQuery } from '@tanstack/react-query'
 import { getSinglePost } from '../../services/index/Post'
+import ArticleDetaileskeleton from './component/ArticleDetaileskeleton'
+import Errormessage from '../../components/Errormessage'
 
 
 const postData = [
@@ -47,7 +49,7 @@ const tagsData = [
 const ArticleDetailpage = () => {
   const {slug} = useParams()
   const [BreadcrumbData, setBreadcrumbData] = useState([])
-  const {data} = useQuery({
+  const {data, isLoading, isError} = useQuery({
     queryFn: () => getSinglePost({slug}),
     queryKey: ["blog", slug],
     onSuccess: (data) => {
@@ -60,6 +62,12 @@ const ArticleDetailpage = () => {
   })
   return (
     <Mainlayout>
+      {isLoading ? (
+        <ArticleDetaileskeleton/>
+      ) : isError ? (
+        <Errormessage message="could not fetch the post"/>
+      ): (
+
         <section className='container mx-auto max-w-5xl flex flex-col px-5 py-5
         lg:flex-row lg:gap-x-5 lg:items-start
         '>
@@ -95,6 +103,7 @@ const ArticleDetailpage = () => {
              </div>
              </div>
         </section>
+      )}
     </Mainlayout>
   )
 }
