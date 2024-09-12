@@ -1,16 +1,23 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { images, stables } from '../../../constants'
 
 const SuggestedPost = ({className,header, post = [], tags}) => {
+  console.log(post)
   return (
     <div className={`w-full shadow-[rgba(7,_65,_210,_0.1)_0px_9px_30px] rounded-lg p-4 ${className}`}>
      <h1 className='font-medium text-Dark-hard md:text-xl'>{header}</h1>
      <div className='grid gap-y-5 mt-5 md:grid-cols-2 md:gap-x-5 lg:grid-cols-1'>
      {post.map((item, index) => (
          <div key={item.id} className='flex gap-x-3 flex-nowrap items-center'>
-         <img className='aspect-square object-cover rounded-lg w-1/5' src={item.image} alt="laptop" />
+         <img className='aspect-square object-cover rounded-lg w-1/5' src={item.image ? 
+         stables.upload_Folder_Base_Url + item?.image : images.HeroImage} alt={item?.Title} />
          <div className='text-sm font-medium text-Dark-hard'>
-            <h3 className='text-sm font-medium text-Dark-hard md:text-base lg:text-lg'>{item.title}</h3>
+          <h3 className='text-sm font-medium text-Dark-hard md:text-base lg:text-lg'>
+            <Link to={`/blog/${item.slug}`}>
+            {item?.Title}
+            </Link>
+          </h3>
             <span className='text-xs opacity-60'>
                 {new Date(item.createdAt).toLocaleDateString("en-US",{
                     day: "numeric",
@@ -23,6 +30,7 @@ const SuggestedPost = ({className,header, post = [], tags}) => {
      ))}
      </div>
      <h2 className='text-Dark-hard font-medium mt-8 md:text-xl'>Tags</h2>
+     {tags.length === 0 && <p className='text-Dark-light'>No Tags</p>}
      <div className='flex flex-wrap gap-x-2 gap-y-2 mt-4'>
         {tags.map((item, index) => (
         <Link key={index}

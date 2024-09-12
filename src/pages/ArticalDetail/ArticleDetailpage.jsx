@@ -6,45 +6,14 @@ import { Link, useParams } from 'react-router-dom'
 import SuggestedPost from './Container/SuggestedPost'
 import ShareButton from '../../components/ShareButton'
 import { useQuery } from '@tanstack/react-query'
-import { getSinglePost } from '../../services/index/Post'
+import { getAllPost, getSinglePost } from '../../services/index/Post'
 import ArticleDetaileskeleton from './component/ArticleDetaileskeleton'
 import Errormessage from '../../components/Errormessage'
 
 
-const postData = [
-  {
-    id: "1",
-    image: images.PostImage,
-    title: "Help Children Get Better Education",
-    createdAt: "02 May 2024",
-  },
-  {
-    id: "2",
-    image: images.PostImage,
-    title: "Help Children Get Better Education",
-    createdAt: "02 May 2024",
-  },  {
-    id: "3",
-    image: images.PostImage,
-    title: "Help Children Get Better Education",
-    createdAt: "02 May 2024",
-  },  {
-    id: "4",
-    image: images.PostImage,
-    title: "Help Children Get Better Education",
-    createdAt: "02 May 2024",
-  },
-]
 
-const tagsData = [
-  "Medical",
-  "Lifestyle",
-  "Learn",
-  "Healthy",
-  "Food",
-  "Diet",
-  "Education"
-]
+
+
 
 const ArticleDetailpage = () => {
   const {slug} = useParams()
@@ -59,6 +28,10 @@ const ArticleDetailpage = () => {
         {name: "Article title", link: `/blog/${data.slug}`},
       ])
     } 
+  })
+  const {data: postData} = useQuery({
+    queryFn: () => getAllPost(),
+    queryKey: ["posts"],
   })
   return (
     <Mainlayout>
@@ -93,7 +66,7 @@ const ArticleDetailpage = () => {
              </div>
             </article>
              <div>
-             <SuggestedPost header="Latest Article" post={postData} tags={tagsData}
+             <SuggestedPost header="Latest Article" post={postData} tags={data?.tags}
              className="mt-8 lg:mt-0 lg:max-w-xs"
              />
              <div className='mt-7'>

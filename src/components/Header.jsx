@@ -46,7 +46,8 @@ const Header = () => {
                     <li className='flex'>pages <MdKeyboardArrowDown className='mt-2'/></li>
                     <li>Pricing</li>
                     <li>Faq</li>
-                    {userstate.userinfo && <li onClick={()=> navigate('/profile')}>Profile</li>}
+                    {userstate?.userinfo?.admin || <li onClick={()=> navigate('/profile')}>Profile</li>}
+                    {userstate?.userinfo?.admin && <li onClick={()=> navigate('/admin')}>Admin Dashboard</li>}
                 </ul>
                 {userstate.userinfo ? (
                     <button onClick={LogoutHandler} className='mt-5 lg:mt-0 border-blue-500 border-2 px-6 py-2 font-semibold text-blue-500 rounded-full
