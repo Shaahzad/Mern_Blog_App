@@ -46,7 +46,7 @@ const Header = () => {
                     <li className='flex'>pages <MdKeyboardArrowDown className='mt-2'/></li>
                     <li>Pricing</li>
                     <li>Faq</li>
-                    {userstate?.userinfo?.admin || <li onClick={()=> navigate('/profile')}>Profile</li>}
+                    <li onClick={()=> navigate('/profile')}>Profile</li>
                     {userstate?.userinfo?.admin && <li onClick={()=> navigate('/admin')}>Admin Dashboard</li>}
                 </ul>
                 {userstate.userinfo ? (

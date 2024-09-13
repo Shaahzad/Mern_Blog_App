@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import Mainlayout from '../../components/Mainlayout'
 import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
@@ -57,10 +57,12 @@ const {register, handleSubmit, formState: {errors, isValid}} = useForm({
         email: '',
         password: ''
     },
-    values: {
-        name: profileisloading ? "" : profile.name,
-        email: profileisloading ? "" : profile.email
-    },
+    values: useMemo(()=>{
+     return {
+      name: profileisloading ? "" : profile.name,
+      email: profileisloading ? "" : profile.email
+  }
+    },[profileisloading, profile?.name, profile?.email]),
     mode: 'onChange'
 })
 const submitHandler = (data) => {

@@ -16,8 +16,8 @@ const NavItemcollapse = ({
      }
     },[ActiveNavName,name])
   return (
-<div className="collapse collapse-arrow bg-base-200 min-h-0 rounded-none py-2">
-  <input type="checkbox" className='min-h-0 py-2' checked={name === ActiveNavName}
+<div className="collapse collapse-arrow bg-base-200 w-60">
+  <input type="checkbox" checked={name === ActiveNavName}
     onChange={()=>{
         setActiveNavName(name); setIschecked(!ischeck)
     }}
